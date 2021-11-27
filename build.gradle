@@ -1,0 +1,49 @@
+plugins {
+	id 'eclipse'
+	id 'java-library'
+	id 'telejigsaw' version '0.1.0'
+	id 'org.cadixdev.licenser' version '0.6.1'
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	maven {
+		name = "QuiltMC"
+		url = "https://maven.quiltmc.org/repository/release"
+	}
+	
+	maven {
+		name = "QuiltMC Snapshots"
+		url = "https://maven.quiltmc.org/repository/snapshot"
+	}
+	
+	maven {
+		name = "Sponge"
+		url = "https://repo.spongepowered.org/repository/maven-public/"
+	}
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(8)
+	}
+	withSourcesJar()
+}
+
+telejigsaw {
+	mappings "org.quiltmc:quilt-mappings:1.17.1+build.13:mergedv2"
+	minecraft "1.17.1"
+}
+
+dependencies {
+	implementation telejigsaw.minecraft
+
+	api "io.github.twilightflower.fumo:fumo-core:0.1.0"
+	api "io.github.twilightflower.fumo:fumo-bootstrap:0.1.0"
+	api "io.github.twilightflower.fumo:fumo-mixin:0.1.0"
+	
+	implementation "org.quiltmc:tiny-remapper:0.7.1"
+	implementation "org.quiltmc:tiny-mappings-parser:0.3.0"
+	implementation "org.quiltmc:hashed:1.17.1-SNAPSHOT"
+}

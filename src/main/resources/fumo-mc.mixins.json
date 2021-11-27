@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "io.github.twilightflower.fumo.mc.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"BrandMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

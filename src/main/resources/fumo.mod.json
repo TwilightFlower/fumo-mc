@@ -1,0 +1,5 @@
+{
+	"id": "fumo-mc",
+	"version": "0.1.0",
+	"mixins": ["fumo-mc.mixins.json"]
+}
