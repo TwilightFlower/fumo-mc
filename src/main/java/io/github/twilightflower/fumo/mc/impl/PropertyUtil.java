@@ -18,6 +18,8 @@
 
 package io.github.twilightflower.fumo.mc.impl;
 
+import net.fabricmc.api.EnvType;
+
 public class PropertyUtil {
 	public static final String MAPPINGS_LOCATION = System.getProperty("fumo.minecraft.mappingsfile", "hashed/mappings.tiny");
 	public static final String RUNTIME_MAPPINGS = System.getProperty("fumo.minecraft.runtimemappings", "hashed");
@@ -39,6 +41,14 @@ public class PropertyUtil {
 	
 	public static String getSide() {
 		return System.getProperty(SIDE_PROP, "server");
+	}
+	
+	public static boolean isCurrentSide(EnvType env) {
+		if(env == EnvType.CLIENT) {
+			return getSide().equals("client");
+		} else {
+			return getSide().equals("server");
+		}
 	}
 	
 	public static void setSide(String to) {

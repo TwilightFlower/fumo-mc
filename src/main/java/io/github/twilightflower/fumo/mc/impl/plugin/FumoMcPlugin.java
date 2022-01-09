@@ -36,11 +36,16 @@ import io.github.twilightflower.fumo.core.api.FumoLoader;
 import io.github.twilightflower.fumo.core.api.data.DataObject;
 import io.github.twilightflower.fumo.core.api.mod.ModMetadata;
 import io.github.twilightflower.fumo.core.api.plugin.FumoLoaderPlugin;
+import io.github.twilightflower.fumo.core.api.transformer.ClassTransformer;
 import io.github.twilightflower.fumo.core.api.transformer.TransformerRegistry;
 import io.github.twilightflower.fumo.mc.impl.NameRemapperImpl;
 import io.github.twilightflower.fumo.mc.impl.PropertyUtil;
 
 public class FumoMcPlugin implements FumoLoaderPlugin {
+	private static final FumoIdentifier TRANSFORMS_END = new FumoIdentifier("fumo-mc", "loader_transforms_end");
+	private static final FumoIdentifier TRANSFORMS_BEGIN = new FumoIdentifier("fumo-mc", "loader_transforms_begin");
+	private static final FumoIdentifier MIXIN = new FumoIdentifier("mixin", "mixin");
+	
 	private boolean discoveredMods = false;
 	private FumoLoader loader;
 	
@@ -84,14 +89,44 @@ public class FumoMcPlugin implements FumoLoaderPlugin {
 	
 	@Override
 	public void registerTransformers(TransformerRegistry transformerRegistry) {
+		transformerRegistry.registerTransformer(
+				TRANSFORMS_END,
+				new NoopTransformer(),
+				Collections.singleton(MIXIN)
+		);
+		transformerRegistry.registerTransformer(
+				TRANSFORMS_BEGIN,
+				new NoopTransformer(),
+				Collections.singleton(TRANSFORMS_END)
+		);
+		
+		
 		if(PropertyUtil.IS_DEVELOPMENT) {
 			transformerRegistry.registerTransformer(
-					new FumoIdentifier("fumo-mc", "devwidener"),
+					new FumoIdentifier("fumo-mc", "dev_widener"),
 					new DevWidenerTransformer(),
 					Collections.emptySet(),
-					Collections.singleton(new FumoIdentifier("mixin", "mixin"))
+					Collections.singleton(MIXIN) // mixin dislikes access fuckery
 				);
 		}
-		transformerRegistry.registerTransformer(new FumoIdentifier("fumo-mc", "brand"), new BrandTransformer());
+		transformer(
+				transformerRegistry,
+				new FumoIdentifier("fumo-mc", "brand"),
+				new BrandTransformer()
+		);
+		transformer(
+				transformerRegistry,
+				new FumoIdentifier("fumo-mc", "env_annotations"),
+				new EnvAnnotationTransformer()
+		);
+	}
+	
+	private void transformer(TransformerRegistry to, FumoIdentifier id, ClassTransformer transformer) {
+		to.registerTransformer(
+				id,
+				transformer,
+				Collections.singleton(TRANSFORMS_END),
+				Collections.singleton(TRANSFORMS_BEGIN)
+		);
 	}
 }
