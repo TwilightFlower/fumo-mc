@@ -24,26 +24,28 @@ public class EnvAnnotationTransformer implements ClassTransformer {
 
 	@Override
 	public ClassNode transform(String className, ClassNode clazz) {
-		for(AnnotationNode a : clazz.invisibleAnnotations) {
-			if(a.desc.equals("Lnet/fabricmc/api/Environment;")) {
-				EnvType env = getEnvType(a);
-				if(!PropertyUtil.isCurrentSide(env)) {
-					throw new NoClassDefFoundError(className + " does not exist on this side");
-				}
-			} else if(a.desc.equals("Lnet/fabricmc/api/EnvironmentInterface;")) {
-				EnvType env = getEnvType(a);
-				if(PropertyUtil.isCurrentSide(env)) {
-					Type itf = getItfType(a);
-					clazz.interfaces.add(itf.getClassName());
-				}
-			} else if(a.desc.equals("Lnet/fabricmc/api/EnvironmentInterfaces;")) {
-				@SuppressWarnings("unchecked")
-				List<AnnotationNode> vals = (List<AnnotationNode>) getAnnotationProperty(a, "value");
-				for(AnnotationNode envItf : vals) {
-					EnvType env = getEnvType(envItf);
-					if(PropertyUtil.isCurrentSide(env)) {
-						Type itf = getItfType(envItf);
-						clazz.interfaces.add(itf.getClassName());
+		if(clazz.invisibleAnnotations != null) {
+			for(AnnotationNode a : clazz.invisibleAnnotations) {
+				if(a.desc.equals("Lnet/fabricmc/api/Environment;")) {
+					EnvType env = getEnvType(a);
+					if(!PropertyUtil.isCurrentSide(env)) {
+						throw new NoClassDefFoundError(className + " does not exist on this side");
+					}
+				} else if(a.desc.equals("Lnet/fabricmc/api/EnvironmentInterface;")) {
+					EnvType env = getEnvType(a);
+					if(!PropertyUtil.isCurrentSide(env)) {
+						Type itf = getItfType(a);
+						clazz.interfaces.remove(itf.getClassName().replace('.', '/'));
+					}
+				} else if(a.desc.equals("Lnet/fabricmc/api/EnvironmentInterfaces;")) {
+					@SuppressWarnings("unchecked")
+					List<AnnotationNode> vals = (List<AnnotationNode>) getAnnotationProperty(a, "value");
+					for(AnnotationNode envItf : vals) {
+						EnvType env = getEnvType(envItf);
+						if(!PropertyUtil.isCurrentSide(env)) {
+							Type itf = getItfType(envItf);
+							clazz.interfaces.remove(itf.getClassName().replace('.', '/'));
+						}
 					}
 				}
 			}
@@ -51,13 +53,15 @@ public class EnvAnnotationTransformer implements ClassTransformer {
 		Iterator<MethodNode> mIter = clazz.methods.iterator();
 		while(mIter.hasNext()) {
 			MethodNode m = mIter.next();
-			for(AnnotationNode a : m.invisibleAnnotations) {
-				if(a.desc.equals("Lnet/fabricmc/api/Environment;")) {
-					EnvType env = getEnvType(a);
-					if(!PropertyUtil.isCurrentSide(env)) {
-						mIter.remove();
+			if(m.invisibleAnnotations != null) {
+				for(AnnotationNode a : m.invisibleAnnotations) {
+					if(a.desc.equals("Lnet/fabricmc/api/Environment;")) {
+						EnvType env = getEnvType(a);
+						if(!PropertyUtil.isCurrentSide(env)) {
+							mIter.remove();
+						}
+						break;
 					}
-					break;
 				}
 			}
 		}
@@ -65,13 +69,15 @@ public class EnvAnnotationTransformer implements ClassTransformer {
 		Iterator<FieldNode> fIter = clazz.fields.iterator();
 		while(fIter.hasNext()) {
 			FieldNode f = fIter.next();
-			for(AnnotationNode a : f.invisibleAnnotations) {
-				if(a.desc.equals("Lnet/fabricmc/api/Environment;")) {
-					EnvType env = getEnvType(a);
-					if(!PropertyUtil.isCurrentSide(env)) {
-						fIter.remove();
+			if(f.invisibleAnnotations != null) {
+				for(AnnotationNode a : f.invisibleAnnotations) {
+					if(a.desc.equals("Lnet/fabricmc/api/Environment;")) {
+						EnvType env = getEnvType(a);
+						if(!PropertyUtil.isCurrentSide(env)) {
+							fIter.remove();
+						}
+						break;
 					}
-					break;
 				}
 			}
 		}

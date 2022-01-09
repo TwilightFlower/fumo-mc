@@ -50,13 +50,25 @@ configurations {
 }
 
 dependencies {
-	implementation telejigsaw.minecraft
+	nonTransitive telejigsaw.minecraft
 
-	api "io.github.twilightflower.fumo:fumo-core:0.1.0"
+	api("io.github.twilightflower.fumo:fumo-core:0.1.0") {
+		exclude group: "com.google.guava"
+		exclude group: "com.google.code.gson"
+	}
 	api "io.github.twilightflower.fumo:fumo-bootstrap:0.1.0"
-	api "io.github.twilightflower.fumo:fumo-mixin:0.1.0"
+	api("io.github.twilightflower.fumo:fumo-mixin:0.1.0") {
+		exclude group: "com.google.code.gson"
+	}
 	
-	implementation "org.quiltmc:tiny-remapper:0.7.1"
-	implementation "org.quiltmc:tiny-mappings-parser:0.3.0"
-	implementation "org.quiltmc:hashed:1.17.1-SNAPSHOT"
+	implementation("org.quiltmc:tiny-remapper:0.7.1") {
+		exclude group: "org.ow2.asm"
+	}
+	implementation("org.quiltmc:tiny-mappings-parser:0.3.0") {
+		exclude group: "com.google.guava"
+	}
+	nonTransitive "org.quiltmc:hashed:1.17.1-SNAPSHOT"
+	
+	compileClasspath nonTransitive
+	runtimeClasspath nonTransitive
 }

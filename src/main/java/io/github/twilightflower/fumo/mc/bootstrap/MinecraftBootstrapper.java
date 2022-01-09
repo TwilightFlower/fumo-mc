@@ -54,6 +54,7 @@ public class MinecraftBootstrapper implements Bootstrapper {
 		"com/github/zafarkhaja/semver/Version.class",
 		
 		"com/google/common/base/MoreObjects.class",
+		"com/google/common/util/concurrent/internal/InternalFutures.class", // two random-ass guava classes are in a different jar.
 		"com/google/gson/Gson.class",
 		"com/google/common/jimfs/Jimfs.class",
 		
@@ -190,7 +191,7 @@ public class MinecraftBootstrapper implements Bootstrapper {
 	}
 	
 	private boolean findMcJar(Path root, Path jarPath) {
-		if(Files.exists(root.resolve("META-INF").resolve("MOJANGCS.RSA"))) {
+		if(Files.exists(root.resolve("META-INF").resolve("MOJANGCS.RSA")) || Files.isDirectory(root.resolve("net").resolve("minecraft"))) {
 			mcJar = jarPath;
 			PropertyUtil.setJarLoc(mcJar.toString());
 			Path brandRet = root.resolve("net").resolve("minecraft").resolve("client").resolve("ClientBrandRetriever.class");
