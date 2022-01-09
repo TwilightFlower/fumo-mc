@@ -22,6 +22,7 @@ public class PropertyUtil {
 	public static final String MAPPINGS_LOCATION = System.getProperty("fumo.minecraft.mappingsfile", "hashed/mappings.tiny");
 	public static final String RUNTIME_MAPPINGS = System.getProperty("fumo.minecraft.runtimemappings", "hashed");
 	public static final String PROVIDED_MAPPINGS = System.getProperty("fumo.minecraft.providedmappings", "official");
+	public static final String DEV_REMAP_MIXIN_FROM = System.getProperty("fumo.minecraft.dev.mapmixinsfrom", "hashed");
 	public static final boolean IS_DEVELOPMENT = System.getProperty("fumo.minecraft.dev", "false").equals("true");
 	
 	private static final String JAR_LOC_PROP = "fumo.minecraft.jarloc";

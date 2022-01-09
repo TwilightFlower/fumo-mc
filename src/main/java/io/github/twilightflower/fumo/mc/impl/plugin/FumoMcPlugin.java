@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import org.spongepowered.asm.mixin.MixinEnvironment;
+
 import com.github.zafarkhaja.semver.Version;
 
 import io.github.twilightflower.fumo.core.api.FumoIdentifier;
@@ -35,14 +37,17 @@ import io.github.twilightflower.fumo.core.api.data.DataObject;
 import io.github.twilightflower.fumo.core.api.mod.ModMetadata;
 import io.github.twilightflower.fumo.core.api.plugin.FumoLoaderPlugin;
 import io.github.twilightflower.fumo.core.api.transformer.TransformerRegistry;
+import io.github.twilightflower.fumo.mc.impl.NameRemapperImpl;
 import io.github.twilightflower.fumo.mc.impl.PropertyUtil;
 
 public class FumoMcPlugin implements FumoLoaderPlugin {
 	private boolean discoveredMods = false;
+	private FumoLoader loader;
 	
 	@Override
 	public void init(FumoLoader loader) {
 		loader.registerLaunchProvider(new FumoIdentifier("fumo-mc", "minecraft-main"), new McLaunchProvider());
+		this.loader = loader;
 	}
 	
 	@Override
@@ -66,6 +71,14 @@ public class FumoMcPlugin implements FumoLoaderPlugin {
 			}
 		} else {
 			return Collections.emptySet();
+		}
+	}
+	
+	@Override
+	public void pluginsLoaded() {
+		// mixin plugin is now at the very least on classpath
+		if(PropertyUtil.IS_DEVELOPMENT) {
+			MixinEnvironment.getDefaultEnvironment().getRemappers().add(NameRemapperImpl.INSTANCE);
 		}
 	}
 	

@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.spongepowered.asm.mixin.extensibility.IRemapper;
+
 import io.github.twilightflower.fumo.core.api.util.Pair;
 import io.github.twilightflower.fumo.mc.api.NameRemapper;
 import net.fabricmc.mapping.tree.ClassDef;
@@ -33,7 +35,7 @@ import net.fabricmc.mapping.tree.MethodDef;
 import net.fabricmc.mapping.tree.TinyMappingFactory;
 import net.fabricmc.mapping.tree.TinyTree;
 
-public class NameRemapperImpl implements NameRemapper {
+public class NameRemapperImpl implements NameRemapper, IRemapper {
 	public static final NameRemapperImpl INSTANCE = new NameRemapperImpl(loadMappings());
 	
 	// pair: <namespace, classname>
@@ -151,5 +153,45 @@ public class NameRemapperImpl implements NameRemapper {
 		public int hashCode() {
 			return hashCode;
 		}
+	}
+
+	@Override
+	public String mapMethodName(String owner, String name, String desc) {
+		return methodsMap.getOrDefault(new MemberEntry(PropertyUtil.DEV_REMAP_MIXIN_FROM, owner, desc, name), name);
+	}
+
+	@Override
+	public String mapFieldName(String owner, String name, String desc) {
+		return fieldsMap.getOrDefault(new MemberEntry(PropertyUtil.DEV_REMAP_MIXIN_FROM, owner, desc, name), name);
+	}
+
+	@Override
+	public String map(String typeName) {
+		return classesMap.getOrDefault(Pair.of(PropertyUtil.DEV_REMAP_MIXIN_FROM, typeName), typeName);
+	}
+
+	@Override
+	public String unmap(String typeName) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String mapDesc(String desc) {
+		StringBuilder resultBuilder = new StringBuilder();
+		for(int i = 1; i < desc.length(); i++) {
+			char c = desc.charAt(i);
+			resultBuilder.append(c);
+			if(c == 'L') {
+				int end = desc.indexOf(';', i);
+				resultBuilder.append(mapClassName(PropertyUtil.DEV_REMAP_MIXIN_FROM, desc.substring(i + 1, end)));
+				i = end - 1;
+			}
+		}
+		return resultBuilder.toString();
+	}
+
+	@Override
+	public String unmapDesc(String desc) {
+		throw new UnsupportedOperationException();
 	}
 }

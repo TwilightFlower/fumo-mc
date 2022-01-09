@@ -24,6 +24,12 @@ repositories {
 	}
 }
 
+license {
+	matching('**/fabricmc/**') {
+		header = file('ENVANNOTATIONS-LICENSE')
+	}
+}
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(8)
@@ -37,6 +43,10 @@ telejigsaw {
 		intermediaryNamespace = "hashed"
 	}
 	minecraft "1.17.1"
+}
+
+configurations {
+	nonTransitive
 }
 
 dependencies {
