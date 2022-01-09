@@ -32,7 +32,10 @@ java {
 }
 
 telejigsaw {
-	mappings "org.quiltmc:quilt-mappings:1.17.1+build.13:mergedv2"
+	mappings {
+		dependency = "org.quiltmc:quilt-mappings:1.17.1+build.13:mergedv2"
+		intermediaryNamespace = "hashed"
+	}
 	minecraft "1.17.1"
 }
 

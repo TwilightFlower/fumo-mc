@@ -1,7 +1,17 @@
 /*
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ *
+ *     Copyright (C) 2021 TwilightFlower
+ *
+ *     This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License along with this program; if not, see <https://www.gnu.org/licenses>.
+ *
+ *     Additional permission under GNU GPL version 3 section 7
+ *
+ *     If you modify this Program, or any covered work, by linking or combining it with another work, the licensors of this Program grant you additional permission to convey the resulting work.
  */
 
 package io.github.twilightflower.fumo.mc.bootstrap;
@@ -79,7 +89,7 @@ public class MinecraftBootstrapper implements Bootstrapper {
 		for(; i < args.length; i++) {
 			if(args[i].equals("--version")) {
 				mcVersion = args[i + 1];
-				System.setProperty("fumo.minecraft.version", mcVersion);
+				PropertyUtil.setMcVers(mcVersion);
 				break;
 			}
 		}
@@ -199,7 +209,7 @@ public class MinecraftBootstrapper implements Bootstrapper {
 			Path mappingCache = Paths.get(".fumoremapcache", mcVersion, remapTo + ".jar");
 			if(!Files.exists(mappingCache)) {
 				IMappingProvider mappings = TinyUtils.createTinyMappingProvider(new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(mappingsLoc))), remapFrom, remapTo);
-				try(FileSystem mappedFs = FileSystems.newFileSystem(mcJar, Collections.singletonMap("create", true), getClass().getClassLoader())) {
+				try(FileSystem mappedFs = FileSystems.newFileSystem(mappingCache.toUri(), Collections.singletonMap("create", true), getClass().getClassLoader())) {
 					TinyRemapper remapper = TinyRemapper.newRemapper().withMappings(mappings).build();
 					remapper.readInputs(mcJar);
 					remapper.apply((String fname, byte[] content) -> {
