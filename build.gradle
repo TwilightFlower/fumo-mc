@@ -69,6 +69,6 @@ dependencies {
 	}
 	nonTransitive "org.quiltmc:hashed:1.17.1-SNAPSHOT"
 	
-	compileClasspath nonTransitive
-	runtimeClasspath nonTransitive
+	compileClasspath configurations.nonTransitive
+	runtimeClasspath configurations.nonTransitive
 }
