@@ -3,7 +3,12 @@ plugins {
 	id 'java-library'
 	id 'telejigsaw' version '0.1.0'
 	id 'org.cadixdev.licenser' version '0.6.1'
+	id 'maven-publish'
 }
+
+group = "io.github.twilightflower.fumo"
+archivesBaseName = "fumo-mc"
+version = "0.1.0"
 
 repositories {
 	mavenLocal()
@@ -43,6 +48,30 @@ telejigsaw {
 		intermediaryNamespace = "hashed"
 	}
 	minecraft "1.17.1"
+	launches {
+		all {
+			it.mainClass "io.github.twilightflower.fumo.bootstrap.Main"
+			it.properties(
+				"fumo.minecraft.dev": "true",
+				"fumo.minecraft.runtimemappings": "named"
+			)
+		}
+		profile("client") {
+			it.properties(
+				"fumo.minecraft.side": "client"
+			)
+			it.args([
+				"--version", "1.17.1",
+				"--accessToken", "dontcrash"
+			])
+		}
+		profile("server") {
+			it.properties(
+				"fumo.minecraft.side": "server",
+				"fumo.minecraft.version": "1.17.1"
+			)
+		}
+	}
 }
 
 configurations {
@@ -71,4 +100,12 @@ dependencies {
 	
 	compileClasspath configurations.nonTransitive
 	runtimeClasspath configurations.nonTransitive
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			from components.java
+		}
+	}
 }

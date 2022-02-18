@@ -79,7 +79,7 @@ public class MinecraftBootstrapper implements Bootstrapper {
 	private final Set<Path> targetPaths = new HashSet<>();
 	private final Collection<FileSystem> fileSystems = new ArrayList<>();
 	private String[] args;
-	private String mcVersion;
+	private String mcVersion = PropertyUtil.getMcVers();
 	private Path mcJar;
 	
 	@Override
